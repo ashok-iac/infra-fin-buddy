@@ -4,4 +4,5 @@ output "organization_info" {
     id  = data.aws_organizations_organization.this.id
     arn = data.aws_organizations_organization.this.arn
   }
+
 }
