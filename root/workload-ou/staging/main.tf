@@ -1,0 +1,65 @@
+locals {
+  account_name           = "staging"
+  core_s3_tf_policy_name = "core-terraform-bucket-access"
+
+  workload_ou_id = [for x in data.aws_organizations_organizational_units.root.children : x.id if x.name == "Workload"][0]
+  # core_account_id = [for x in data.aws_organizations_organization.this.accounts : x.id if x.name == "core"][1]
+}
+
+module "aws_organizations_account" {
+  source = "github.com/infraspecdev/terraform-aws-account?ref=main"
+
+  account_name               = local.account_name
+  account_email              = "aws-updates+2@finfunai.com"
+  parent_org_id              = local.workload_ou_id
+  close_on_deletion          = true
+  iam_user_access_to_billing = "DENY"
+
+  providers = {
+    aws = aws.root
+  }
+}
+
+module "github_actions_iam_role" {
+  source  = "infraspecdev/github-action-iam-role/aws"
+  version = ">= 1.0"
+
+  role_name        = "${local.account_name}-terraform-gh-role"
+  aws_account_id   = module.aws_organizations_account.account_id
+  github_username  = "fin-buddy-assistant"
+  repository_names = ["iac", "ai-expenses-tracker-backend", "sms-categorisation"]
+
+  providers = {
+    aws = aws.staging
+  }
+  depends_on = [
+    module.aws_organizations_account
+  ]
+}
+
+# resource "aws_iam_role_policy" "core_s3_access" {
+#   provider   = aws.staging
+#   name       = local.core_s3_tf_policy_name
+#   role       = "${local.account_name}-terraform-gh-role"
+#   depends_on = [module.github_actions_iam_role]
+
+#   policy = jsonencode({
+#     Version = "2012-10-17"
+#     Statement = [
+#       {
+#         Sid    = "VisualEditor0"
+#         Effect = "Allow"
+#         Action = [
+#           "s3:PutObject",
+#           "s3:DeleteObject",
+#           "s3:GetObject",
+#           "s3:ListBucket"
+#         ]
+#         Resource = [
+#           data.aws_s3_bucket.core.arn,
+#           "${data.aws_s3_bucket.core.arn}/*",
+#         ]
+#       }
+#     ]
+#   })
+# }
