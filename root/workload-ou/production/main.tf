@@ -1,16 +1,15 @@
 locals {
   account_name           = "production"
-  core_s3_tf_policy_name = "core-terraform-bucket-access"
+  core_s3_tf_policy_name = "infra-fin-buddy-bucket"
 
-  workload_ou_id  = [for x in data.aws_organizations_organizational_units.root.children : x.id if x.name == "Workload"][0]
-  core_account_id = [for x in data.aws_organizations_organization.this.accounts : x.id if x.name == "core"][1]
+  workload_ou_id = [for x in data.aws_organizations_organizational_units.root.children : x.id if x.name == "Workload"][0]
 }
 
 module "aws_organizations_account" {
   source = "github.com/infraspecdev/terraform-aws-account?ref=main"
 
   account_name               = local.account_name
-  account_email              = "aws-updates+3@finfunai.com"
+  account_email              = "ashok23122002+3@gmail.com"
   parent_org_id              = local.workload_ou_id
   close_on_deletion          = true
   iam_user_access_to_billing = "DENY"
@@ -37,29 +36,29 @@ module "github_actions_iam_role" {
   ]
 }
 
-resource "aws_iam_role_policy" "core_s3_access" {
-  provider   = aws.production
-  name       = local.core_s3_tf_policy_name
-  role       = "${local.account_name}-terraform-gh-role"
-  depends_on = [module.github_actions_iam_role]
+# resource "aws_iam_role_policy" "core_s3_access" {
+#   provider   = aws.production
+#   name       = local.core_s3_tf_policy_name
+#   role       = "${local.account_name}-terraform-gh-role"
+#   depends_on = [module.github_actions_iam_role]
 
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Sid    = "VisualEditor0"
-        Effect = "Allow"
-        Action = [
-          "s3:PutObject",
-          "s3:DeleteObject",
-          "s3:GetObject",
-          "s3:ListBucket"
-        ]
-        Resource = [
-          data.aws_s3_bucket.core.arn,
-          "${data.aws_s3_bucket.core.arn}/*",
-        ]
-      }
-    ]
-  })
-}
+#   policy = jsonencode({
+#     Version = "2012-10-17"
+#     Statement = [
+#       {
+#         Sid    = "VisualEditor0"
+#         Effect = "Allow"
+#         Action = [
+#           "s3:PutObject",
+#           "s3:DeleteObject",
+#           "s3:GetObject",
+#           "s3:ListBucket"
+#         ]
+#         Resource = [
+#           data.aws_s3_bucket.core.arn,
+#           "${data.aws_s3_bucket.core.arn}/*",
+#         ]
+#       }
+#     ]
+#   })
+# }

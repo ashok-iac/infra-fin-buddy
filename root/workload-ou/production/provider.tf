@@ -24,17 +24,17 @@ provider "aws" {
   }
 }
 
-provider "aws" {
-  alias  = "core"
-  region = "ap-south-1"
+# provider "aws" {
+#   alias  = "core"
+#   region = "ap-south-1"
 
-  assume_role {
-    role_arn = "arn:aws:iam::${local.core_account_id}:role/OrganizationAccountAccessRole"
-  }
+#   assume_role {
+#     role_arn = "arn:aws:iam::${local.core_account_id}:role/OrganizationAccountAccessRole"
+#   }
 
-  default_tags {
-    tags = {
-      ManagedBy = "Terraform"
-    }
-  }
-}
+#   default_tags {
+#     tags = {
+#       ManagedBy = "Terraform"
+#     }
+#   }
+# }
