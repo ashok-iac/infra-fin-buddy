@@ -26,8 +26,8 @@ module "github_actions_iam_role" {
 
   role_name        = "${local.account_name}-terraform-gh-role"
   aws_account_id   = module.aws_organizations_account.account_id
-  github_username  = "fin-buddy-assistant"
-  repository_names = ["iac", "ai-expenses-tracker-backend", "sms-categorisation"]
+  github_username  = "ashok-iac"
+  repository_names = ["infra-fin-buddy", "ai-expenses-tracker-backend", "sms-categorisation"]
 
   providers = {
     aws = aws.staging
