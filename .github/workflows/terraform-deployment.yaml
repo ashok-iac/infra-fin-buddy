@@ -68,7 +68,7 @@ jobs:
         run: /home/runner/work/infra-fin-buddy/infra-fin-buddy/.github/scripts/set-gh-role.sh "${{ matrix.dir }}"
         env:
           ROOT_GH_ROLE: ${{ vars.ROOT_GH_ROLE }}
-          # STAGING_GH_ROLE: ${{ vars.STAGING_GH_ROLE }}
+          STAGING_GH_ROLE: ${{ vars.STAGING_GH_ROLE }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
