@@ -10,7 +10,7 @@ module "aws_organizations_account" {
   source = "github.com/infraspecdev/terraform-aws-account?ref=main"
 
   account_name               = local.account_name
-  account_email              = "aws-updates+2@finfunai.com"
+  account_email              = "ashok23122002+2@finfunaai.com"
   parent_org_id              = local.workload_ou_id
   close_on_deletion          = true
   iam_user_access_to_billing = "DENY"
